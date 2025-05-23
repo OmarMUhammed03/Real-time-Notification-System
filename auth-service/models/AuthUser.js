@@ -7,6 +7,7 @@ const AuthUserSchema = new mongoose.Schema({
   roles: { type: [String], default: ["user"] },
   isActive: { type: Boolean, default: false },
   createdAt: { type: Date, default: Date.now },
+  refreshTokens: [{ type: String }],
 });
 
 AuthUserSchema.methods.comparePassword = function (password) {

@@ -1,6 +1,7 @@
 const express = require("express");
 const { createProxyMiddleware } = require("http-proxy-middleware");
-const { authenticate } = require("../middlewares/authMiddleWare");
+
+// TODO: add authentication middleware
 
 const router = express.Router();
 
@@ -23,7 +24,6 @@ router.use(
 
 router.use(
   "/users",
-  authenticate,
   createProxyMiddleware({
     target: USER_SERVICE_URL,
     changeOrigin: true,
@@ -32,7 +32,6 @@ router.use(
 
 router.use(
   "/notifications",
-  authenticate,
   createProxyMiddleware({
     target: NOTIFICATION_SERVICE_URL,
     changeOrigin: true,

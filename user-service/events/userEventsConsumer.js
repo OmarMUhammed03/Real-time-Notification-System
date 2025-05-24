@@ -1,4 +1,4 @@
-const { createConsumer, startConsumer } = require("../../utils/kafkaConsumer");
+const { createConsumer, startConsumer } = require("../utils/kafkaConsumer");
 const userService = require("../services/userService");
 
 async function handleUserRegistered({ message }) {

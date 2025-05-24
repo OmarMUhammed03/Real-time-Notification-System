@@ -1,25 +1,19 @@
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
-const {
-  findByEmail,
-  createUser,
-  addRefreshToken,
-  removeRefreshToken,
-  findUserByRefreshToken,
-} = require("../repositories/authRepository");
+const authRepository = require("../repositories/authRepository");
 const { HTTP_STATUS, BCRYPT_SALT_ROUNDS } = require("../utils/constants");
 const JWT_SECRET = process.env.JWT_SECRET;
 const { sendEvent } = require("../utils/kafkaProducer");
 
 const register = async ({ email, password, ...body }) => {
-  const existing = await findByEmail(email);
+  const existing = await authRepository.findByEmail(email);
   if (existing) {
     const error = new Error("User already exists");
     error.status = HTTP_STATUS.CONFLICT;
     throw error;
   }
   const hashedPassword = await bcrypt.hash(password, BCRYPT_SALT_ROUNDS);
-  const user = await createUser({ email, hashedPassword });
+  const user = await authRepository.createUser({ email, hashedPassword });
 
   await sendEvent("userRegistered", [
     { value: JSON.stringify({ email: user.email, userId: user._id, ...body }) },
@@ -29,7 +23,7 @@ const register = async ({ email, password, ...body }) => {
 };
 
 const login = async ({ email, password }) => {
-  const user = await findByEmail(email);
+  const user = await authRepository.findByEmail(email);
   const isMatch = user && (await user.comparePassword(password));
   if (!user || !isMatch) {
     const error = new Error("Invalid credentials");
@@ -42,7 +36,7 @@ const login = async ({ email, password }) => {
   const refreshToken = jwt.sign({ id: user._id }, JWT_SECRET, {
     expiresIn: process.env.REFRESH_TOKEN_DURATION,
   });
-  await addRefreshToken(user._id, refreshToken);
+  await authRepository.addRefreshToken(user._id, refreshToken);
   return { token, refreshToken };
 };
 
@@ -52,7 +46,7 @@ const refreshToken = async (token) => {
     error.status = HTTP_STATUS.UNAUTHORIZED;
     throw error;
   }
-  const user = await findUserByRefreshToken(token);
+  const user = await authRepository.findUserByRefreshToken(token);
   if (!user) {
     const error = new Error("Invalid refresh token");
     error.status = HTTP_STATUS.UNAUTHORIZED;
@@ -67,9 +61,9 @@ const refreshToken = async (token) => {
 
 const logout = async (token) => {
   if (!token) return { message: "No token provided" };
-  const user = await findUserByRefreshToken(token);
+  const user = await authRepository.findUserByRefreshToken(token);
   if (user) {
-    await removeRefreshToken(user._id, token);
+    await authRepository.removeRefreshToken(user._id, token);
   }
   return { message: "Logged out successfully" };
 };

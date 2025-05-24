@@ -9,8 +9,9 @@ const {
 } = require("../repositories/authRepository");
 const { HTTP_STATUS, BCRYPT_SALT_ROUNDS } = require("../../utils/constants");
 const JWT_SECRET = process.env.JWT_SECRET;
+const { sendEvent } = require("../../utils/kafkaProducer");
 
-const register = async ({ email, password }) => {
+const register = async ({ email, password, ...body }) => {
   const existing = await findByEmail(email);
   if (existing) {
     const error = new Error("User already exists");
@@ -18,7 +19,13 @@ const register = async ({ email, password }) => {
     throw error;
   }
   const hashedPassword = await bcrypt.hash(password, BCRYPT_SALT_ROUNDS);
-  return createUser({ email, hashedPassword });
+  const user = await createUser({ email, hashedPassword });
+
+  await sendEvent("userRegistered", [
+    { value: JSON.stringify({ email: user.email, userId: user._id, ...body }) },
+  ]);
+
+  return user;
 };
 
 const login = async ({ email, password }) => {

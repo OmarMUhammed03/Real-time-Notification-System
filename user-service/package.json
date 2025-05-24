@@ -10,6 +10,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "colors": "^1.4.0",
     "express": "^5.1.0",
     "kafkajs": "^2.2.4",
     "mongoose": "^8.15.0"

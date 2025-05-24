@@ -5,7 +5,6 @@ const cookieParser = require("cookie-parser");
 const logger = require("morgan");
 const colors = require("colors");
 const http = require("http");
-const connectDB = require("../utils/functions");
 
 const app = express();
 const server = http.createServer(app);
@@ -17,8 +16,6 @@ app.use(cookieParser());
 app.use(logger("dev"));
 
 app.use("/api", proxy);
-
-connectDB().then(() => console.log("Connected to MongoDB 200 OK".bgGreen.bold));
 
 server.listen(PORT, () => {
   console.log(`Server running at http://localhost:${PORT}/`.cyan.bold);

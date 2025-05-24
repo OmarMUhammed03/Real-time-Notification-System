@@ -1,10 +1,11 @@
 const jwt = require("jsonwebtoken");
+const { HTTP_STATUS } = require("../../utils/constants");
 
 const authenticate = (req, res, next) => {
   const authHeader = req.headers.authorization;
   if (!authHeader || !authHeader.startsWith("Bearer ")) {
     return res
-      .status(401)
+      .status(HTTP_STATUS.UNAUTHORIZED)
       .json({ error: "Missing or invalid Authorization header" });
   }
 
@@ -16,7 +17,9 @@ const authenticate = (req, res, next) => {
     req.user = payload;
     next();
   } catch (err) {
-    return res.status(401).json({ error: "Invalid token" });
+    return res
+      .status(HTTP_STATUS.UNAUTHORIZED)
+      .json({ error: "Invalid token" });
   }
 };
 

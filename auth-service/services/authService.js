@@ -30,10 +30,10 @@ const login = async ({ email, password }) => {
     throw error;
   }
   const token = jwt.sign({ id: user._id, roles: user.roles }, JWT_SECRET, {
-    expiresIn: "1h",
+    expiresIn: process.env.ACCESS_TOKEN_DURATION,
   });
   const refreshToken = jwt.sign({ id: user._id }, JWT_SECRET, {
-    expiresIn: "7d",
+    expiresIn: process.env.REFRESH_TOKEN_DURATION,
   });
   await addRefreshToken(user._id, refreshToken);
   return { token, refreshToken };
@@ -53,7 +53,7 @@ const refreshToken = async (token) => {
   }
   jwt.verify(token, JWT_SECRET);
   const newToken = jwt.sign({ id: user._id, roles: user.roles }, JWT_SECRET, {
-    expiresIn: "1h",
+    expiresIn: process.env.ACCESS_TOKEN_DURATION,
   });
   return { token: newToken };
 };

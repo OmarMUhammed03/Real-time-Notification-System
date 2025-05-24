@@ -5,7 +5,7 @@ require("./events/userEventsConsumer");
 
 const app = express();
 const userRouter = require("./controllers/userController");
-const { HTTP_STATUS } = require("../utils/constants");
+const { HTTP_STATUS } = require("./utils/constants");
 const { connectDB } = require("./utils/functions");
 
 connectDB(process.env.MONGO_URI).then(() =>

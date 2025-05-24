@@ -1,6 +1,7 @@
 const express = require("express");
 const proxy = require("./routes/proxy");
 const dotenv = require("dotenv");
+dotenv.config();
 const cookieParser = require("cookie-parser");
 const logger = require("morgan");
 const colors = require("colors");

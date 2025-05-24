@@ -1,6 +1,5 @@
-# Auth Service Dockerfile
 FROM node:18
-WORKDIR /app
+WORKDIR /app/auth-service
 COPY package*.json ./
 RUN npm install --only=prod
 COPY . .

@@ -1,5 +1,5 @@
 FROM node:18
-WORKDIR /app
+WORKDIR /app/api-gateway
 COPY package*.json ./
 RUN npm install --only=prod
 COPY . .

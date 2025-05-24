@@ -36,6 +36,7 @@ services:
       - PORT=3000
       - AUTH_SERVICE_PORT=3001
       - USER_SERVICE_PORT=3002
+      - NOTIFICATION_SERVICE_PORT=3003
       - JWT_SECRET=da2e3193-6d56-4da1-97b4-cadcc5d8f96a
     depends_on:
       - auth-service
@@ -55,6 +56,8 @@ services:
       - AUTH_SERVICE_PORT=3001
       - JWT_SECRET=da2e3193-6d56-4da1-97b4-cadcc5d8f96a
       - MONGO_URI=mongodb://mongo:27017/auth-db
+      - ACCESS_TOKEN_DURATION=1h
+      - REFRESH_TOKEN_DURATION=7d
     depends_on:
       - kafka
       - mongo

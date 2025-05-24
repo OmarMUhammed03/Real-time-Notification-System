@@ -1,6 +1,5 @@
-# User Service Dockerfile
 FROM node:18
-WORKDIR /app
+WORKDIR /app/user-service
 COPY package*.json ./
 RUN npm install --only=prod
 COPY . .

@@ -28,7 +28,7 @@ services:
     build:
       context: ./api-gateway
       dockerfile: Dockerfile
-    working_dir: /app/api-gateway
+    working_dir: /app
     command: node index.js
     ports:
       - "3000:3000"
@@ -48,7 +48,7 @@ services:
     build:
       context: ./auth-service
       dockerfile: Dockerfile
-    working_dir: /app/auth-service
+    working_dir: /app
     command: node index.js
     ports:
       - "3001:3001"
@@ -66,7 +66,7 @@ services:
     build:
       context: ./user-service
       dockerfile: Dockerfile
-    working_dir: /app/user-service
+    working_dir: /app
     command: node index.js
     ports:
       - "3002:3002"

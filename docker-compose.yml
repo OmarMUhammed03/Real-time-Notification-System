@@ -35,8 +35,7 @@ services:
       - AUTH_SERVICE_PORT=3001
       - USER_SERVICE_PORT=3002
       - NOTIFICATION_SERVICE_PORT=3003
-      - JWT_SECRET=your_jwt_secret
-      - MONGO_URI=mongodb://mongo:27017/gmail-clone
+      - JWT_SECRET=da2e3193-6d56-4da1-97b4-cadcc5d8f96a
     depends_on:
       - auth-service
       - user-service
@@ -52,8 +51,8 @@ services:
       - "3001:3001"
     environment:
       - AUTH_SERVICE_PORT=3001
-      - JWT_SECRET=your_jwt_secret
-      - MONGO_URI=mongodb://mongo:27017/gmail-clone
+      - JWT_SECRET=da2e3193-6d56-4da1-97b4-cadcc5d8f96a
+      - MONGO_URI=mongodb://mongo:27017/auth-db
     depends_on:
       - kafka
       - mongo
@@ -66,7 +65,7 @@ services:
       - "3002:3002"
     environment:
       - USER_SERVICE_PORT=3002
-      - MONGO_URI=mongodb://mongo:27017/gmail-clone
+      - MONGO_URI=mongodb://mongo:27017/user-db
     depends_on:
       - kafka
       - mongo
@@ -79,7 +78,7 @@ services:
       - "3003:3003"
     environment:
       - NOTIFICATION_SERVICE_PORT=3003
-      - MONGO_URI=mongodb://mongo:27017/gmail-clone
+      - MONGO_URI=mongodb://mongo:27017/notification-db
     depends_on:
       - kafka
       - mongo

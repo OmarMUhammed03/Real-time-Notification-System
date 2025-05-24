@@ -1,8 +1,8 @@
-version: '3.8'
-
 services:
   zookeeper:
-    image: wurstmeister/zookeeper:3.4.6
+    image: bitnami/zookeeper:latest
+    environment:
+      - ALLOW_ANONYMOUS_LOGIN=yes
     ports:
       - "2181:2181"
 
@@ -27,39 +27,34 @@ services:
   api-gateway:
     build:
       context: ./api-gateway
-    deploy:
-      replicas: 2
-      restart_policy:
-        condition: on-failure
+      dockerfile: Dockerfile
+    working_dir: /app/api-gateway
+    command: node index.js
     ports:
       - "3000:3000"
     environment:
       - PORT=3000
       - AUTH_SERVICE_PORT=3001
       - USER_SERVICE_PORT=3002
-      - NOTIFICATION_SERVICE_PORT=3003
-      - JWT_SECRET=your_jwt_secret
-      - MONGO_URI=mongodb://mongo:27017/gmail-clone
+      - JWT_SECRET=da2e3193-6d56-4da1-97b4-cadcc5d8f96a
     depends_on:
       - auth-service
       - user-service
-      - notification-service
       - kafka
       - mongo
 
   auth-service:
     build:
       context: ./auth-service
-    deploy:
-      replicas: 2
-      restart_policy:
-        condition: on-failure
+      dockerfile: Dockerfile
+    working_dir: /app/auth-service
+    command: node index.js
     ports:
       - "3001:3001"
     environment:
       - AUTH_SERVICE_PORT=3001
-      - JWT_SECRET=your_jwt_secret
-      - MONGO_URI=mongodb://mongo:27017/gmail-clone
+      - JWT_SECRET=da2e3193-6d56-4da1-97b4-cadcc5d8f96a
+      - MONGO_URI=mongodb://mongo:27017/auth-db
     depends_on:
       - kafka
       - mongo
@@ -67,47 +62,14 @@ services:
   user-service:
     build:
       context: ./user-service
-    deploy:
-      replicas: 2
-      restart_policy:
-        condition: on-failure
+      dockerfile: Dockerfile
+    working_dir: /app/user-service
+    command: node index.js
     ports:
       - "3002:3002"
     environment:
       - USER_SERVICE_PORT=3002
-      - MONGO_URI=mongodb://mongo:27017/gmail-clone
-    depends_on:
-      - kafka
-      - mongo
-
-  notification-service:
-    build:
-      context: ./notification-service
-    deploy:
-      replicas: 2
-      restart_policy:
-        condition: on-failure
-    ports:
-      - "3003:3003"
-    environment:
-      - NOTIFICATION_SERVICE_PORT=3003
-      - MONGO_URI=mongodb://mongo:27017/gmail-clone
-    depends_on:
-      - kafka
-      - mongo
-
-  email-service:
-    build:
-      context: ./email-service
-    deploy:
-      replicas: 2
-      restart_policy:
-        condition: on-failure
-    ports:
-      - "3004:3004"
-    environment:
-      - EMAIL_SERVICE_PORT=3004
-      - MONGO_URI=mongodb://mongo:27017/gmail-clone
+      - MONGO_URI=mongodb://mongo:27017/user-db
     depends_on:
       - kafka
       - mongo

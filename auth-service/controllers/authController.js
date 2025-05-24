@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const authService = require('../services/authService');
-const { HTTP_STATUS } = require('../../utils/constants');
+const { HTTP_STATUS } = require('../utils/constants');
 
 router.post('/register', async (req, res, next) => {
   try {

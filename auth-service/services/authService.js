@@ -7,7 +7,7 @@ const {
   removeRefreshToken,
   findUserByRefreshToken,
 } = require("../repositories/authRepository");
-const { HTTP_STATUS, BCRYPT_SALT_ROUNDS } = require("../../utils/constants");
+const { HTTP_STATUS, BCRYPT_SALT_ROUNDS } = require("../utils/constants");
 const JWT_SECRET = process.env.JWT_SECRET;
 const { sendEvent } = require("../../utils/kafkaProducer");
 

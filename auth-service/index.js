@@ -3,7 +3,7 @@ const dotenv = require("dotenv");
 
 const app = express();
 const authRouter = require("./controllers/authController");
-const { HTTP_STATUS } = require("../utils/constants");
+const { HTTP_STATUS } = require("./utils/constants");
 
 app.use(express.json());
 app.use("/auth", authRouter);

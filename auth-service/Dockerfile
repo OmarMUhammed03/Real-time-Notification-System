@@ -1,7 +1,7 @@
 # Auth Service Dockerfile
 FROM node:18
 WORKDIR /app
-COPY package.json ./
+COPY package*.json ./
 RUN npm install --only=prod
 COPY . .
 EXPOSE 3001

@@ -25,9 +25,12 @@ services:
       - mongo-data:/data/db
 
   api-gateway:
-    build: .
-    working_dir: /app/api-gateway
-    command: node index.js
+    build:
+      context: ./api-gateway
+    deploy:
+      replicas: 2
+      restart_policy:
+        condition: on-failure
     ports:
       - "3000:3000"
     environment:
@@ -35,7 +38,8 @@ services:
       - AUTH_SERVICE_PORT=3001
       - USER_SERVICE_PORT=3002
       - NOTIFICATION_SERVICE_PORT=3003
-      - JWT_SECRET=da2e3193-6d56-4da1-97b4-cadcc5d8f96a
+      - JWT_SECRET=your_jwt_secret
+      - MONGO_URI=mongodb://mongo:27017/gmail-clone
     depends_on:
       - auth-service
       - user-service
@@ -44,41 +48,66 @@ services:
       - mongo
 
   auth-service:
-    build: .
-    working_dir: /app/auth-service
-    command: node index.js
+    build:
+      context: ./auth-service
+    deploy:
+      replicas: 2
+      restart_policy:
+        condition: on-failure
     ports:
       - "3001:3001"
     environment:
       - AUTH_SERVICE_PORT=3001
-      - JWT_SECRET=da2e3193-6d56-4da1-97b4-cadcc5d8f96a
-      - MONGO_URI=mongodb://mongo:27017/auth-db
+      - JWT_SECRET=your_jwt_secret
+      - MONGO_URI=mongodb://mongo:27017/gmail-clone
     depends_on:
       - kafka
       - mongo
 
   user-service:
-    build: .
-    working_dir: /app/user-service
-    command: node index.js
+    build:
+      context: ./user-service
+    deploy:
+      replicas: 2
+      restart_policy:
+        condition: on-failure
     ports:
       - "3002:3002"
     environment:
       - USER_SERVICE_PORT=3002
-      - MONGO_URI=mongodb://mongo:27017/user-db
+      - MONGO_URI=mongodb://mongo:27017/gmail-clone
     depends_on:
       - kafka
       - mongo
 
   notification-service:
-    build: .
-    working_dir: /app/notification-service
-    command: node index.js
+    build:
+      context: ./notification-service
+    deploy:
+      replicas: 2
+      restart_policy:
+        condition: on-failure
     ports:
       - "3003:3003"
     environment:
       - NOTIFICATION_SERVICE_PORT=3003
-      - MONGO_URI=mongodb://mongo:27017/notification-db
+      - MONGO_URI=mongodb://mongo:27017/gmail-clone
+    depends_on:
+      - kafka
+      - mongo
+
+  email-service:
+    build:
+      context: ./email-service
+    deploy:
+      replicas: 2
+      restart_policy:
+        condition: on-failure
+    ports:
+      - "3004:3004"
+    environment:
+      - EMAIL_SERVICE_PORT=3004
+      - MONGO_URI=mongodb://mongo:27017/gmail-clone
     depends_on:
       - kafka
       - mongo

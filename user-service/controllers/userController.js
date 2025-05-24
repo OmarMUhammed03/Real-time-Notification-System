@@ -7,7 +7,7 @@ const { HTTP_STATUS } = require("../utils/constants");
 
 router.get("/", async (req, res, next) => {
   try {
-    const users = await userService.getAllUsers();
+    const users = await userService.findAllUsers();
     res.status(HTTP_STATUS.OK).json(users);
   } catch (err) {
     next(err);

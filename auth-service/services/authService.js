@@ -9,7 +9,7 @@ const {
 } = require("../repositories/authRepository");
 const { HTTP_STATUS, BCRYPT_SALT_ROUNDS } = require("../utils/constants");
 const JWT_SECRET = process.env.JWT_SECRET;
-const { sendEvent } = require("../../utils/kafkaProducer");
+const { sendEvent } = require("../utils/kafkaProducer");
 
 const register = async ({ email, password, ...body }) => {
   const existing = await findByEmail(email);

@@ -1,4 +1,4 @@
-const AuthUser = require("../models/authUser");
+const AuthUser = require("../models/AuthUser");
 
 const findByEmail = async (email) => AuthUser.findOne({ email });
 const createUser = async (data) => new AuthUser(data).save();

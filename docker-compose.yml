@@ -1,0 +1,88 @@
+version: '3.8'
+
+services:
+  zookeeper:
+    image: wurstmeister/zookeeper:3.4.6
+    ports:
+      - "2181:2181"
+
+  kafka:
+    image: wurstmeister/kafka:2.12-2.2.1
+    ports:
+      - "9092:9092"
+    environment:
+      KAFKA_ADVERTISED_HOST_NAME: kafka
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+    depends_on:
+      - zookeeper
+
+  mongo:
+    image: mongo:6
+    restart: always
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+
+  api-gateway:
+    build: .
+    working_dir: /app/api-gateway
+    command: node index.js
+    ports:
+      - "3000:3000"
+    environment:
+      - PORT=3000
+      - AUTH_SERVICE_PORT=3001
+      - USER_SERVICE_PORT=3002
+      - NOTIFICATION_SERVICE_PORT=3003
+      - JWT_SECRET=your_jwt_secret
+      - MONGO_URI=mongodb://mongo:27017/gmail-clone
+    depends_on:
+      - auth-service
+      - user-service
+      - notification-service
+      - kafka
+      - mongo
+
+  auth-service:
+    build: .
+    working_dir: /app/auth-service
+    command: node index.js
+    ports:
+      - "3001:3001"
+    environment:
+      - AUTH_SERVICE_PORT=3001
+      - JWT_SECRET=your_jwt_secret
+      - MONGO_URI=mongodb://mongo:27017/gmail-clone
+    depends_on:
+      - kafka
+      - mongo
+
+  user-service:
+    build: .
+    working_dir: /app/user-service
+    command: node index.js
+    ports:
+      - "3002:3002"
+    environment:
+      - USER_SERVICE_PORT=3002
+      - MONGO_URI=mongodb://mongo:27017/gmail-clone
+    depends_on:
+      - kafka
+      - mongo
+
+  notification-service:
+    build: .
+    working_dir: /app/notification-service
+    command: node index.js
+    ports:
+      - "3003:3003"
+    environment:
+      - NOTIFICATION_SERVICE_PORT=3003
+      - MONGO_URI=mongodb://mongo:27017/gmail-clone
+    depends_on:
+      - kafka
+      - mongo
+
+volumes:
+  mongo-data:

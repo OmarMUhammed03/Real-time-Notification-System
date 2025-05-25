@@ -1,4 +1,5 @@
 const express = require("express");
+const morgan = require("morgan");
 const dotenv = require("dotenv");
 dotenv.config();
 const colors = require("colors");
@@ -23,7 +24,7 @@ app.use((err, req, res, next) => {
 const PORT = process.env.USER_SERVICE_PORT;
 
 app.listen(PORT, () => {
-  console.log(`Auth service running on port ${PORT}`);
+  console.log(`User service running on port ${PORT}`);
 });
 
 module.exports = app;

@@ -14,6 +14,7 @@ connectDB(process.env.MONGO_URI).then(() =>
   console.log("Connected to MongoDB 200 OK".bgGreen.bold)
 );
 app.use(express.json());
+app.use(morgan("dev"));
 app.use("/users", userRouter);
 
 app.use((err, req, res, next) => {

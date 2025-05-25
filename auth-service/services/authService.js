@@ -6,7 +6,7 @@ const JWT_SECRET = process.env.JWT_SECRET;
 const { sendEvent } = require("../utils/kafkaProducer");
 
 const register = async ({ email, password, ...body }) => {
-  if(!body.name || !body.birthDate || !body.gender) {
+  if (!body.name || !body.birthDate || !body.gender) {
     const error = new Error("Missing required fields");
     error.status = HTTP_STATUS.BAD_REQUEST;
     throw error;
@@ -27,6 +27,12 @@ const register = async ({ email, password, ...body }) => {
   return user;
 };
 
+const getCurrentUser = async (token) => {
+  const id = jwt.verify(token, JWT_SECRET).id;
+  const user = await authRepository.findUserById(id);
+  return { id: user._id, email: user.email };
+};
+
 const login = async ({ email, password }) => {
   const user = await authRepository.findByEmail(email);
   const isMatch = user && (await user.comparePassword(password));
@@ -35,7 +41,7 @@ const login = async ({ email, password }) => {
     error.status = HTTP_STATUS.UNAUTHORIZED;
     throw error;
   }
-  const token = jwt.sign({ id: user._id, roles: user.roles }, JWT_SECRET, {
+  const token = jwt.sign({ id: user._id }, JWT_SECRET, {
     expiresIn: process.env.ACCESS_TOKEN_DURATION,
   });
   const refreshToken = jwt.sign({ id: user._id }, JWT_SECRET, {
@@ -58,7 +64,7 @@ const refreshToken = async (token) => {
     throw error;
   }
   jwt.verify(token, JWT_SECRET);
-  const newToken = jwt.sign({ id: user._id, roles: user.roles }, JWT_SECRET, {
+  const newToken = jwt.sign({ id: user._id }, JWT_SECRET, {
     expiresIn: process.env.ACCESS_TOKEN_DURATION,
   });
   return { token: newToken };

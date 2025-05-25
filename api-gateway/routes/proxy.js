@@ -11,12 +11,6 @@ const AUTH_SERVICE_URL = `http://localhost:${AUTH_SERVICE_PORT}/auth`;
 const USER_SERVICE_PORT = process.env.USER_SERVICE_PORT;
 const USER_SERVICE_URL = `http://localhost:${USER_SERVICE_PORT}/users`;
 
-router.get("/", (req, res) => {
-  res.status(200).json({
-    message: "API Gateway",
-  });
-});
-
 router.use(
   "/auth",
   createProxyMiddleware({
@@ -29,6 +23,7 @@ router.use(
   "/users",
   createProxyMiddleware({
     target: USER_SERVICE_URL,
+    changeOrigin: true,
   })
 );
 

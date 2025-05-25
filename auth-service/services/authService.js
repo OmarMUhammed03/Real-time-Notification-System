@@ -6,6 +6,11 @@ const JWT_SECRET = process.env.JWT_SECRET;
 const { sendEvent } = require("../utils/kafkaProducer");
 
 const register = async ({ email, password, ...body }) => {
+  if(!body.name || !body.birthDate || !body.gender) {
+    const error = new Error("Missing required fields");
+    error.status = HTTP_STATUS.BAD_REQUEST;
+    throw error;
+  }
   const existing = await authRepository.findByEmail(email);
   if (existing) {
     const error = new Error("User already exists");

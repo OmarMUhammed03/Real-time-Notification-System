@@ -14,6 +14,7 @@ connectDB(process.env.MONGO_URI).then(() =>
 );
 
 app.use(express.json());
+app.use(morgan("dev"));
 app.use("/auth", authRouter);
 
 app.use((err, req, res, next) => {

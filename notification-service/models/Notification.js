@@ -4,12 +4,12 @@ const NotificationSchema = new mongoose.Schema({
   message: { type: String, required: true },
   senderId: { type: String, required: true },
   receiverId: { type: String, required: true },
-  isRead: { type: Boolean, default: false },
   category: {
     type: String,
-    enum: ["inbox", "spam", "sent", "starred"],
+    enum: ["inbox", "spam", "starred"],
     required: true,
   },
+  isRead: { type: Boolean, default: false },
   createdAt: { type: Date, default: Date.now },
 });
 

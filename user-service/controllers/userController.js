@@ -8,7 +8,7 @@ const { HTTP_STATUS } = require("../utils/constants");
 router.get("/", async (req, res, next) => {
   try {
     const users = await userService.findAllUsers();
-    res.status(HTTP_STATUS.OK).json(users);
+    res.status(HTTP_STATUS.OK).json({ data: users });
   } catch (err) {
     next(err);
   }
@@ -17,7 +17,7 @@ router.get("/", async (req, res, next) => {
 router.post("/", async (req, res, next) => {
   try {
     const user = await userService.createUser(req.body);
-    res.status(HTTP_STATUS.CREATED).json(user);
+    res.status(HTTP_STATUS.CREATED).json({ data: user });
   } catch (err) {
     next(err);
   }
@@ -26,7 +26,7 @@ router.post("/", async (req, res, next) => {
 router.get("/:id", async (req, res, next) => {
   try {
     const user = await userService.findUserById(req.params.id);
-    res.status(HTTP_STATUS.OK).json(user);
+    res.status(HTTP_STATUS.OK).json({ data: user });
   } catch (err) {
     next(err);
   }
@@ -35,7 +35,7 @@ router.get("/:id", async (req, res, next) => {
 router.put("/:id", async (req, res, next) => {
   try {
     const user = await userService.updateUser(req.params.id, req.body);
-    res.status(HTTP_STATUS.OK).json(user);
+    res.status(HTTP_STATUS.OK).json({ data: user });
   } catch (err) {
     next(err);
   }
@@ -44,7 +44,7 @@ router.put("/:id", async (req, res, next) => {
 router.delete("/:id", async (req, res, next) => {
   try {
     const user = await userService.deleteUser(req.params.id);
-    res.status(HTTP_STATUS.OK).json(user);
+    res.status(HTTP_STATUS.OK).json({ data: user });
   } catch (err) {
     next(err);
   }
@@ -53,7 +53,7 @@ router.delete("/:id", async (req, res, next) => {
 router.get("/email/:email", async (req, res, next) => {
   try {
     const user = await userService.findUserByEmail(req.params.email);
-    res.status(HTTP_STATUS.OK).json(user);
+    res.status(HTTP_STATUS.OK).json({ data: user });
   } catch (err) {
     next(err);
   }

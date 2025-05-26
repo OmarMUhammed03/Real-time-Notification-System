@@ -1,5 +1,6 @@
 const express = require("express");
 const morgan = require("morgan");
+const cookieParser = require("cookie-parser");
 const dotenv = require("dotenv");
 dotenv.config();
 const colors = require("colors");
@@ -15,6 +16,7 @@ connectDB(process.env.MONGO_URI).then(() =>
 
 app.use(express.json());
 app.use(morgan("dev"));
+app.use(cookieParser());
 app.use("/auth", authRouter);
 
 app.use((err, req, res, next) => {

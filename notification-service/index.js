@@ -5,7 +5,7 @@ const dotenv = require("dotenv");
 dotenv.config();
 const colors = require("colors");
 const cookieParser = require("cookie-parser");
-// const notificationRouter = require("./controllers/notificationController");
+const notificationRouter = require("./controllers/notificationController");
 const { HTTP_STATUS } = require("./utils/constants");
 const { connectDB } = require("./utils/functions");
 const { initializeSocket } = require("./utils/socketHandler");
@@ -19,7 +19,7 @@ app.use(express.json());
 app.use(morgan("dev"));
 app.use(cookieParser());
 
-// app.use("/notifications", notificationRouter);
+app.use("/notifications", notificationRouter);
 
 const PORT = process.env.NOTIFICATION_SERVICE_PORT;
 

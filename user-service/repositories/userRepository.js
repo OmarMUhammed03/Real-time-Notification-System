@@ -24,3 +24,8 @@ exports.updateUser = async (id, user) => {
   const updatedUser = await User.findByIdAndUpdate(id, user, { new: true });
   return updatedUser;
 };
+
+exports.deleteUser = async (id) => {
+  const deletedUser = await User.findByIdAndDelete(id);
+  return deletedUser;
+};

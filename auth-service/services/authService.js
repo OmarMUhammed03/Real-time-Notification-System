@@ -28,8 +28,13 @@ const register = async ({ email, password, ...body }) => {
 };
 
 const getCurrentUser = async (token) => {
+  if (!token) {
+    const error = new Error("No token provided");
+    error.status = HTTP_STATUS.UNAUTHORIZED;
+    throw error;
+  }
   const id = jwt.verify(token, JWT_SECRET).id;
-  const user = await authRepository.findUserById(id);
+  const user = await authRepository.findById(id);
   return { id: user._id, email: user.email };
 };
 
@@ -79,4 +84,4 @@ const logout = async (token) => {
   return { message: "Logged out successfully" };
 };
 
-module.exports = { register, login, refreshToken, logout };
+module.exports = { register, login, refreshToken, logout, getCurrentUser };

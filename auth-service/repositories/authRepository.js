@@ -1,5 +1,6 @@
 const AuthUser = require("../models/AuthUser");
 
+const findById = async (id) => AuthUser.findById(id);
 const findByEmail = async (email) => AuthUser.findOne({ email });
 const createUser = async (data) => new AuthUser(data).save();
 const addRefreshToken = async (userId, token) => {
@@ -23,6 +24,7 @@ const findUserByRefreshToken = async (token) => {
 };
 
 module.exports = {
+  findById,
   findByEmail,
   createUser,
   addRefreshToken,

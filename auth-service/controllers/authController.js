@@ -66,7 +66,7 @@ router.post("/refresh-token", async (req, res, next) => {
 
 router.post("/logout", async (req, res, next) => {
   try {
-    const { refreshToken: token } = req.body;
+    const { refresh_token: token } = req.cookies;
     const result = await authService.logout(token);
     res.clearCookie("access_token");
     res.clearCookie("refresh_token");

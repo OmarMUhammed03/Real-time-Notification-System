@@ -1,7 +1,8 @@
 const mongoose = require("mongoose");
 
 const NotificationSchema = new mongoose.Schema({
-  message: { type: String, required: true },
+  title: { type: String, required: true },
+  content: { type: String, required: true },
   senderId: { type: String, required: true },
   receiverId: { type: String, required: true },
   category: {

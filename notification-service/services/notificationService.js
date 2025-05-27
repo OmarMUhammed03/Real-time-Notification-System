@@ -19,13 +19,15 @@ exports.createNotification = async (notification) => {
   return createdNotification;
 };
 
-exports.findNotificationsBySenderId = async (senderId) => {
-  const notifications = await notificationRepository.getSentNotifications(senderId);
+exports.findNotificationsBySenderEmail = async (senderEmail) => {
+  const notifications = await notificationRepository.getSentNotifications(senderEmail);
   return notifications;
 };
 
-exports.findNotificationsByReceiverId = async (receiverId) => {
-  const notifications = await notificationRepository.getNotifications(receiverId);
+exports.findUserNotifications = async (email) => {
+  const notifications = await notificationRepository.getNotificationsByReceiverEmail(email);
+  const sentNotifications = await notificationRepository.getNotificationsBySenderEmail(email);
+  notifications.push(...sentNotifications);
   return notifications;
 };
 

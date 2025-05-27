@@ -5,6 +5,7 @@ const { HTTP_STATUS } = require("../utils/constants");
 
 router.get("/me", async (req, res, next) => {
   try {
+    console.log("cookies", req.cookies);
     const { id, email } = await authService.getCurrentUser(
       req.cookies.access_token
     );
@@ -30,6 +31,7 @@ router.post("/register", async (req, res, next) => {
 router.post("/login", async (req, res, next) => {
   try {
     const { token, refreshToken } = await authService.login(req.body);
+    console.log("login successful", token, refreshToken);
     res.cookie("access_token", token, {
       httpOnly: true,
       secure: true,
@@ -42,7 +44,7 @@ router.post("/login", async (req, res, next) => {
       sameSite: "strict",
       maxAge: process.env.REFRESH_TOKEN_MAX_AGE,
     });
-    res.status(HTTP_STATUS.OK).json({ message: "Login successful" });
+    res.status(HTTP_STATUS.OK).json({ access_token: token, refresh_token: refreshToken });
   } catch (err) {
     next(err);
   }

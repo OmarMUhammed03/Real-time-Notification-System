@@ -7,6 +7,17 @@ exports.findAllUsers = async () => {
 };
 
 exports.createUser = async (user) => {
+  if(!user.email || !user.name || !user.birthDate || !user.gender) {
+    const error = new Error("Missing required fields");
+    error.status = HTTP_STATUS.BAD_REQUEST;
+    throw error;
+  }
+  const existingUser = await userRepository.findUserByEmail(user.email);
+  if (existingUser) {
+    const error = new Error("User already exists");
+    error.status = HTTP_STATUS.CONFLICT;
+    throw error;
+  }
   const createdUser = await userRepository.createUser(user);
   return createdUser;
 };

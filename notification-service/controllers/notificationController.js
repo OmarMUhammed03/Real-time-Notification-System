@@ -5,23 +5,11 @@ const { HTTP_STATUS } = require("../utils/constants");
 
 const router = express.Router();
 
-router.get("/senderId/:senderId", async (req, res, next) => {
+router.get("/receiver-email/:email", async (req, res, next) => {
   try {
-    const notifications = await notificationService.findNotificationsBySenderId(
-      req.params.senderId
+    const notifications = await notificationService.findUserNotifications(
+      req.params.email
     );
-    res.status(HTTP_STATUS.OK).json(notifications);
-  } catch (err) {
-    next(err);
-  }
-});
-
-router.get("/receiverId/:receiverId", async (req, res, next) => {
-  try {
-    const notifications =
-      await notificationService.findNotificationsByReceiverId(
-        req.params.receiverId
-      );
     res.status(HTTP_STATUS.OK).json(notifications);
   } catch (err) {
     next(err);

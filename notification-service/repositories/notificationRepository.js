@@ -10,8 +10,8 @@ exports.getNotifications = async (userId) => {
   return notifications;
 };
 
-exports.getSentNotifications = async (userId) => {
-  const notifications = await Notification.find({ senderId: userId });
+exports.getSentNotifications = async (senderEmail) => {
+  const notifications = await Notification.find({ senderEmail });
   return notifications;
 };
 
@@ -38,4 +38,14 @@ exports.markNotificationAsRead = async (notificationId) => {
     { new: true }
   );
   return updatedNotification;
+};
+
+exports.getNotificationsByReceiverEmail = async (email) => {
+  const notifications = await Notification.find({ receiverEmail: email });
+  return notifications;
+};
+
+exports.getNotificationsBySenderEmail = async (email) => {
+  const notifications = await Notification.find({ senderEmail: email });
+  return notifications;
 };

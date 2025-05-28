@@ -1,20 +1,20 @@
 import React from 'react';
-import { Star, Paperclip } from 'lucide-react';
+import { Star } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 const EmailItem = ({ email, isSelected, onSelect, onStar }) => {
   const handleStarClick = (e) => {
     e.preventDefault();
     e.stopPropagation();
-    onStar(email.id);
+    onStar(email._id);
   };
 
   return (
     <Link
-      to={`/email/${email.id}`}
+      to={`/email/${email._id}`}
       className={`
         block border-b border-gray-200 hover:bg-gray-50 transition-colors duration-200
-        ${email.read ? 'bg-white' : 'bg-blue-50'}
+        ${email.isRead ? 'bg-white' : 'bg-blue-50'}
         ${isSelected ? 'bg-blue-100 hover:bg-blue-100' : ''}
       `}
     >
@@ -23,7 +23,7 @@ const EmailItem = ({ email, isSelected, onSelect, onStar }) => {
           <input
             type="checkbox"
             checked={isSelected}
-            onChange={() => onSelect(email.id)}
+            onChange={() => onSelect(email._id)}
             onClick={(e) => e.stopPropagation()}
             className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
           />
@@ -34,33 +34,29 @@ const EmailItem = ({ email, isSelected, onSelect, onStar }) => {
           >
             <Star 
               size={18} 
-              className={email.starred ? 'fill-yellow-400 text-yellow-400' : ''} 
+              className={email.category == "starred" ? 'fill-yellow-400 text-yellow-400' : ''} 
             />
           </button>
         </div>
         
         <div className="min-w-0 flex-1">
           <div className="flex justify-between">
-            <span className={`text-sm ${email.read ? 'text-gray-600' : 'font-semibold text-gray-900'}`}>
-              {email.sender.name}
+            <span className={`text-sm ${email.isRead ? 'text-gray-600' : 'font-semibold text-gray-900'}`}>
+              {email.senderName}
             </span>
             <span className="text-xs text-gray-500">
-              {new Date(email.date).toLocaleDateString()}
+              {new Date(email.createdAt).toLocaleDateString()}
             </span>
           </div>
           
           <div className="flex items-baseline mt-1">
-            <h3 className={`text-sm ${email.read ? 'text-gray-600' : 'font-semibold text-gray-900'}`}>
-              {email.subject}
+            <h3 className={`text-sm ${email.isRead ? 'text-gray-600' : 'font-semibold text-gray-900'}`}>
+              {email.title}
             </h3>
-            
-            {email.hasAttachment && (
-              <Paperclip size={14} className="ml-2 text-gray-400" />
-            )}
           </div>
           
           <p className="text-xs text-gray-500 truncate mt-1">
-            {email.preview}
+            {email.content}
           </p>
         </div>
       </div>

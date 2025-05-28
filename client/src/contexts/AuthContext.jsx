@@ -22,28 +22,22 @@ export const AuthProvider = ({ children }) => {
   const login = async (email, password) => {
     setLoading(true);
     setError(null);
-
     try {
       axios
-        .post(`${BACKEND_URL}/api/auth/login`, {
-          email,
-          password,
-        })
+        .post(
+          `${BACKEND_URL}/api/auth/login`,
+          { email, password },
+          { withCredentials: true }
+        )
         .then((response) => {
           const { access_token, refresh_token } = response.data;
-          Cookies.set("access_token", access_token, {
-            secure: true,
-            sameSite: "Strict",
-          });
-          Cookies.set("refresh_token", refresh_token, {
-            secure: true,
-            sameSite: "Strict",
-          });
-
-          localStorage.setItem("user", JSON.stringify({ email }));
-
+          localStorage.setItem("token", access_token);
+          localStorage.setItem("refreshToken", refresh_token);
+          Cookies.set("access_token", access_token, { path: "/" });
+          Cookies.set("refresh_token", refresh_token, { path: "/" });
           setUser({ email });
-          window.location.href = "/";
+          localStorage.setItem("user", JSON.stringify({ email }));
+          window.location.href = "/dashboard";
         })
         .catch((error) => {
           setError(error instanceof Error ? error.message : "Login failed");
@@ -89,6 +83,8 @@ export const AuthProvider = ({ children }) => {
   const logout = () => {
     setUser(null);
     localStorage.removeItem("user");
+    localStorage.removeItem("token");
+    localStorage.removeItem("refreshToken");
     Cookies.remove("access_token");
     Cookies.remove("refreshToken");
     window.location.href = "/login";

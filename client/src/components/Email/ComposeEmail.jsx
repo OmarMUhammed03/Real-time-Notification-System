@@ -1,10 +1,8 @@
-import React, { useState } from "react";
-import {
-  X,
-  Bold,
-  Italic,
-  Underline,
-} from "lucide-react";
+import React, { useEffect, useState } from "react";
+import { X, Bold, Italic, Underline } from "lucide-react";
+import FormErrorMessage from "./FormErrorMessage";
+import Cookies from "js-cookie";
+import getSocket from "../../components/Socket";
 
 const ComposeEmail = ({
   onClose,
@@ -16,10 +14,45 @@ const ComposeEmail = ({
   const [to, setTo] = useState(initialTo);
   const [subject, setSubject] = useState(initialSubject);
   const [body, setBody] = useState(initialBody);
+  const [error, setError] = useState("");
+
+  const socket = getSocket();
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    
+    setError("");
+    if (!to.trim()) {
+      setError("Recipient email is required.");
+      return;
+    }
+    if (!subject.trim()) {
+      setError("Subject is required.");
+      return;
+    }
+    if (!body.trim()) {
+      setError("Message body is required.");
+      return;
+    }
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(to.trim())) {
+      setError("Please enter a valid recipient email address.");
+      return;
+    }
+    console.log(
+      "parameters",
+      to,
+      subject,
+      body,
+        localStorage.getItem("token"),
+      JSON.parse(localStorage.getItem("user")).email,
+    );
+    socket.emit("notification", {
+      senderEmail: JSON.parse(localStorage.getItem("user")).email,
+      receiverEmail: to,
+      title: subject,
+      content: body,
+      category: "inbox",
+    });
     onClose();
   };
 
@@ -48,6 +81,7 @@ const ComposeEmail = ({
       </div>
 
       <form onSubmit={handleSubmit} className="flex-1 flex flex-col">
+        <FormErrorMessage message={error} />
         <div className="p-4 border-b border-gray-200">
           <div className="mb-3">
             <input

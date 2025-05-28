@@ -7,7 +7,7 @@ const Compose = () => {
   const navigate = useNavigate();
 
   const handleClose = () => {
-    navigate("/");
+    navigate("/dashboard");
   };
 
   return (

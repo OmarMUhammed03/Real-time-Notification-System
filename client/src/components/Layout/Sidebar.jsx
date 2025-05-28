@@ -56,7 +56,7 @@ const Sidebar = ({ isMobile = false }) => {
           <ul className="space-y-1">
             <li>
               <NavLink 
-                to="/" 
+                to="/dashboard" 
                 className={({ isActive }) => `
                   flex items-center py-2 px-4 rounded-full transition-colors duration-300
                   ${isActive ? 'bg-blue-100 text-blue-600 font-medium' : 'text-gray-700 hover:bg-gray-100'}

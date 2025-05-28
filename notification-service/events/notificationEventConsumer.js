@@ -3,14 +3,16 @@ const notificationService = require("../services/notificationService");
 
 async function handleNotificationEvent(io, onlineUsers) {
   return async ({ message }) => {
+    console.log("Notification event received", message.value.toString());
+    console.log("onlineUsers", onlineUsers);
     try {
       console.log("Processing notification event...", message);
       const event = JSON.parse(message.value.toString());
       await notificationService.createNotification({ ...event });
 
-      const { receiverId } = event;
-      if (receiverId && onlineUsers.has(receiverId)) {
-        const socketId = onlineUsers.get(receiverId);
+      const { receiverEmail } = event;
+      if (receiverEmail && onlineUsers.has(receiverEmail)) {
+        const socketId = onlineUsers.get(receiverEmail);
         io.to(socketId).emit("notification", event);
         console.log("notification sent to the reciever");
       } else {

@@ -23,8 +23,6 @@ app.use(logger("dev"));
 
 app.use("/api", proxy);
 
-app.use(express.json());
-
 server.listen(PORT, () => {
   console.log(`Server running at http://localhost:${PORT}/`.cyan.bold);
 });

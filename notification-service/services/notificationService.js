@@ -3,8 +3,10 @@ const notificationRepository = require("../repositories/notificationRepository")
 
 exports.createNotification = async (notification) => {
   if (
-    !notification.receiverId ||
-    !notification.senderId ||
+    !notification.receiverEmail ||
+    !notification.senderEmail ||
+    !notification.senderName ||
+    !notification.receiverName ||
     !notification.content ||
     !notification.title ||
     !notification.category
@@ -17,6 +19,11 @@ exports.createNotification = async (notification) => {
     notification
   );
   return createdNotification;
+};
+
+exports.findNotification = async (notificationId) => {
+  const notification = await notificationRepository.getNotification(notificationId);
+  return notification;
 };
 
 exports.findNotificationsBySenderEmail = async (senderEmail) => {

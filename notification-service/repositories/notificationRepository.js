@@ -5,6 +5,11 @@ exports.createNotification = async (notification) => {
   return createdNotification;
 };
 
+exports.getNotification = async (notificationId) => {
+  const notification = await Notification.findById(notificationId);
+  return notification;
+};
+
 exports.getNotifications = async (userId) => {
   const notifications = await Notification.find({ receiverId: userId });
   return notifications;

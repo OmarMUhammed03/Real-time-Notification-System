@@ -16,6 +16,17 @@ router.get("/receiver-email/:email", async (req, res, next) => {
   }
 });
 
+router.get("/:id", async (req, res, next) => {
+  try {
+    const notification = await notificationService.findNotification(
+      req.params.id
+    );
+    res.status(HTTP_STATUS.OK).json(notification);
+  } catch (err) {
+    next(err);
+  }
+});
+
 router.put("/:id", async (req, res, next) => {
   try {
     const notification = await notificationService.updateNotification(

@@ -14,7 +14,7 @@ const Login = () => {
   
   useEffect(() => {
     if (user) {
-      navigate('/', { replace: true });
+      navigate('/dashboard', { replace: true });
     }
   }, [user, navigate]);
   
@@ -170,15 +170,6 @@ const Login = () => {
             >
               Sign in
             </button>
-          </div>
-          
-          <div className="text-center mt-4">
-            <p className="text-xs text-gray-500">
-              For demo purposes, use:
-            </p>
-            <p className="text-xs text-gray-600 font-medium">
-              Email: demo@example.com | Password: password
-            </p>
           </div>
         </form>
       </div>

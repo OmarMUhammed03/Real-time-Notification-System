@@ -1,4 +1,3 @@
-const { create } = require("../models/Notification");
 const kafka = require("./kafkaClient");
 const producer = kafka.producer();
 

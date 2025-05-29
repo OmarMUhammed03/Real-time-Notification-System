@@ -90,42 +90,6 @@ const Sidebar = ({ isMobile = false }) => {
                 <span>Sent</span>
               </NavLink>
             </li>
-            <li>
-              <NavLink 
-                to="/drafts" 
-                className={({ isActive }) => `
-                  flex items-center py-2 px-4 rounded-full transition-colors duration-300
-                  ${isActive ? 'bg-blue-100 text-blue-600 font-medium' : 'text-gray-700 hover:bg-gray-100'}
-                `}
-              >
-                <File size={20} className="mr-3" />
-                <span>Drafts</span>
-              </NavLink>
-            </li>
-            <li>
-              <NavLink 
-                to="/trash" 
-                className={({ isActive }) => `
-                  flex items-center py-2 px-4 rounded-full transition-colors duration-300
-                  ${isActive ? 'bg-blue-100 text-blue-600 font-medium' : 'text-gray-700 hover:bg-gray-100'}
-                `}
-              >
-                <Trash2 size={20} className="mr-3" />
-                <span>Trash</span>
-              </NavLink>
-            </li>
-            <li className="mt-8">
-              <NavLink 
-                to="/settings" 
-                className={({ isActive }) => `
-                  flex items-center py-2 px-4 rounded-full transition-colors duration-300
-                  ${isActive ? 'bg-blue-100 text-blue-600 font-medium' : 'text-gray-700 hover:bg-gray-100'}
-                `}
-              >
-                <Settings size={20} className="mr-3" />
-                <span>Settings</span>
-              </NavLink>
-            </li>
           </ul>
         </nav>
       </div>

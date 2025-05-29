@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import axios from "axios";
 import { BACKEND_URL } from "../utils/constants";
 import { Send, Star, Inbox } from "lucide-react";
@@ -10,13 +10,17 @@ import { useLocation } from "react-router-dom";
 const Dashboard = () => {
   const [activeTab, setActiveTab] = useState("inbox");
   const [emails, setEmails] = useState([]);
-  const location = useLocation();
+  const searchRef = useRef();
+  const [search, setSearch] = useState("");
+  const [filteredEmails, setFilteredEmails] = useState([]);
+
+  const user = JSON.parse(localStorage.getItem("user"));
+  const userEmail = user?.email;
 
   useEffect(() => {
     const socket = getSocket();
 
     const handleConnect = () => {
-      const user = JSON.parse(localStorage.getItem("user"));
       if (!user || !user.email) return;
 
       socket.emit("join", { userEmail: user.email, socketId: socket.id });
@@ -27,6 +31,7 @@ const Dashboard = () => {
         })
         .then((response) => {
           setEmails(response.data);
+          setFilteredEmails(response.data);
         })
         .catch((err) => console.log(err));
 
@@ -36,16 +41,13 @@ const Dashboard = () => {
     socket.on("connect", handleConnect);
 
     const handleNotification = (notification) => {
-      const user = JSON.parse(localStorage.getItem("user"));
       if (notification.receiverEmail === user?.email) {
         setEmails((prev) => [notification, ...prev]);
       }
     };
 
-    socket.on("new_notification", handleNotification);
+    socket.on("notification", handleNotification);
 
-    // Always fetch emails when Dashboard is mounted or location changes
-    const user = JSON.parse(localStorage.getItem("user"));
     if (user && user.email) {
       axios
         .get(`${BACKEND_URL}/api/notifications/receiver-email/${user.email}`, {
@@ -53,32 +55,54 @@ const Dashboard = () => {
         })
         .then((response) => {
           setEmails(response.data);
+          setFilteredEmails(response.data);
         })
         .catch((err) => console.log(err));
     }
 
     return () => {
       socket.off("connect", handleConnect);
-      socket.off("new_notification", handleNotification);
+      socket.off("notification", handleNotification);
     };
   }, [location]);
 
-  const filteredEmails = emails.filter((email) => {
-    if (activeTab === "inbox") {
-      return email.category === "inbox";
-    } else if (activeTab === "social") {
-      return email.category === "social";
-    } else if (activeTab === "promotions") {
-      return email.category === "promotions";
+  // Search handler: use backend full-text search
+  const handleSearch = async (e) => {
+    const value = e.target.value;
+    setSearch(value);
+    if (!value.trim()) {
+      setFilteredEmails(emails);
+      return;
     }
-    return true;
-  });
+    try {
+      const res = await axios.get(
+        `${BACKEND_URL}/api/notifications/search/${userEmail}?q=${encodeURIComponent(value)}`,
+        { withCredentials: true }
+      );
+      setFilteredEmails(res.data);
+    } catch (err) {
+      // Optionally handle error
+    }
+  };
+
+  let displayEmails = filteredEmails;
+  if (location.pathname === "/dashboard") {
+    displayEmails = filteredEmails.filter(
+      (email) => email.category === "inbox" && email.receiverEmail === userEmail
+    );
+  } else if (location.pathname === "/starred") {
+    displayEmails = filteredEmails.filter(
+      (email) => email.category === "starred" && email.receiverEmail === userEmail
+    );
+  } else if (location.pathname === "/sent") {
+    displayEmails = filteredEmails.filter((email) => email.senderEmail === userEmail);
+  }
 
   return (
     <MainLayout>
       <div className="h-full">
         <div className="border-b border-gray-200">
-          <div className="flex">
+          <div className="flex items-center">
             <button
               onClick={() => setActiveTab("inbox")}
               className={`px-4 py-2 text-sm font-medium flex items-center ${
@@ -90,32 +114,19 @@ const Dashboard = () => {
               <Inbox size={18} className="mr-2" />
               Inbox
             </button>
-            <button
-              onClick={() => setActiveTab("social")}
-              className={`px-4 py-2 text-sm font-medium flex items-center ${
-                activeTab === "social"
-                  ? "text-blue-600 border-b-2 border-blue-600"
-                  : "text-gray-500 hover:text-gray-700"
-              }`}
-            >
-              <Send size={18} className="mr-2" />
-              Social
-            </button>
-            <button
-              onClick={() => setActiveTab("promotions")}
-              className={`px-4 py-2 text-sm font-medium flex items-center ${
-                activeTab === "promotions"
-                  ? "text-green-600 border-b-2 border-green-600"
-                  : "text-gray-500 hover:text-gray-700"
-              }`}
-            >
-              <Star size={18} className="mr-2" />
-              Promotions
-            </button>
+            {/* Search bar */}
+            <input
+              ref={searchRef}
+              type="text"
+              value={search}
+              onChange={handleSearch}
+              placeholder="Search mail..."
+              className="ml-6 flex-1 px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              style={{ maxWidth: 320 }}
+            />
           </div>
         </div>
-
-        <EmailList emails={filteredEmails} />
+        <EmailList emails={displayEmails} />
       </div>
     </MainLayout>
   );

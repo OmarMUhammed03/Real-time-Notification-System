@@ -1,7 +1,6 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { X, Bold, Italic, Underline } from "lucide-react";
 import FormErrorMessage from "./FormErrorMessage";
-import Cookies from "js-cookie";
 import getSocket from "../../components/Socket";
 
 const ComposeEmail = ({
@@ -43,8 +42,8 @@ const ComposeEmail = ({
       to,
       subject,
       body,
-        localStorage.getItem("token"),
-      JSON.parse(localStorage.getItem("user")).email,
+      localStorage.getItem("token"),
+      JSON.parse(localStorage.getItem("user")).email
     );
     socket.emit("notification", {
       senderEmail: JSON.parse(localStorage.getItem("user")).email,

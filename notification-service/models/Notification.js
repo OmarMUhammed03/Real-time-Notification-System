@@ -17,4 +17,6 @@ const NotificationSchema = new mongoose.Schema({
   createdAt: { type: Date, default: Date.now },
 });
 
+NotificationSchema.index({ title: "text", content: "text" });
+
 module.exports = mongoose.model("Notification", NotificationSchema);

@@ -53,3 +53,7 @@ exports.deleteNotification = async (notificationId) => {
   return deletedNotification;
 };
 
+exports.searchNotifications = async (email, query) => {
+  return notificationRepository.searchNotifications(email, query);
+};
+

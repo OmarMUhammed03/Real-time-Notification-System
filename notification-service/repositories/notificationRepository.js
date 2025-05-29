@@ -54,3 +54,17 @@ exports.getNotificationsBySenderEmail = async (email) => {
   const notifications = await Notification.find({ senderEmail: email });
   return notifications;
 };
+
+exports.searchNotifications = async (email, query) => {
+  return Notification.find({
+    $and: [
+      {
+        $or: [
+          { receiverEmail: email },
+          { senderEmail: email },
+        ],
+      },
+      { $text: { $search: query } },
+    ],
+  });
+};

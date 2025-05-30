@@ -10,6 +10,8 @@ const notificationRouter = require("./controllers/notificationController");
 const { HTTP_STATUS } = require("./utils/constants");
 const { connectDB } = require("./utils/functions");
 const { initializeSocket } = require("./utils/socketHandler");
+const swaggerUi = require("swagger-ui-express");
+const swaggerJsdoc = require("swagger-jsdoc");
 
 const app = express();
 const server = http.createServer(app);
@@ -32,6 +34,24 @@ app.use("/notifications", notificationRouter);
 
 initializeSocket(server);
 
+const swaggerOptions = {
+  definition: {
+    openapi: "3.0.0",
+    info: {
+      title: "Notification Service API",
+      version: "1.0.0",
+      description: "API documentation for the Notification Service",
+    },
+    servers: [
+      { url: `http://localhost:${process.env.NOTIFICATION_SERVICE_PORT}` },
+    ],
+  },
+  apis: [
+    "./docs/notification.swagger.js",
+  ],
+};
+const swaggerSpec = swaggerJsdoc(swaggerOptions);
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 app.use((err, req, res, next) => {
   const status = err.status || HTTP_STATUS.SERVER_ERROR;
@@ -39,7 +59,6 @@ app.use((err, req, res, next) => {
 });
 
 const PORT = process.env.NOTIFICATION_SERVICE_PORT;
-
 
 server.listen(PORT, () => {
   console.log(`User service running on port ${PORT}`);

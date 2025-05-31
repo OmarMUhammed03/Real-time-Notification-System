@@ -1,17 +1,13 @@
-import React, { useEffect, useState, useRef } from "react";
-import axios from "axios";
-import { BACKEND_URL } from "../utils/constants";
-import { Send, Star, Inbox } from "lucide-react";
+import React, { useEffect, useState } from "react";
+import axiosInstance from "../utils/axiosInstance";
+import { Inbox } from "lucide-react";
 import MainLayout from "../components/Layout/MainLayout";
 import EmailList from "../components/Email/EmailList";
 import getSocket from "../components/Socket";
-import { useLocation } from "react-router-dom";
 
-const Dashboard = () => {
+const Dashboard = ({ search, onSearch }) => {
   const [activeTab, setActiveTab] = useState("inbox");
   const [emails, setEmails] = useState([]);
-  const searchRef = useRef();
-  const [search, setSearch] = useState("");
   const [filteredEmails, setFilteredEmails] = useState([]);
 
   const user = JSON.parse(localStorage.getItem("user"));
@@ -25,10 +21,8 @@ const Dashboard = () => {
 
       socket.emit("join", { userEmail: user.email, socketId: socket.id });
 
-      axios
-        .get(`${BACKEND_URL}/api/notifications/receiver-email/${user.email}`, {
-          withCredentials: true,
-        })
+      axiosInstance
+        .get(`/api/notifications/receiver-email/${user.email}`)
         .then((response) => {
           setEmails(response.data);
           setFilteredEmails(response.data);
@@ -49,10 +43,8 @@ const Dashboard = () => {
     socket.on("notification", handleNotification);
 
     if (user && user.email) {
-      axios
-        .get(`${BACKEND_URL}/api/notifications/receiver-email/${user.email}`, {
-          withCredentials: true,
-        })
+      axiosInstance
+        .get(`/api/notifications/receiver-email/${user.email}`)
         .then((response) => {
           setEmails(response.data);
           setFilteredEmails(response.data);
@@ -64,26 +56,25 @@ const Dashboard = () => {
       socket.off("connect", handleConnect);
       socket.off("notification", handleNotification);
     };
-  }, [location]);
+  }, []);
 
-  // Search handler: use backend full-text search
-  const handleSearch = async (e) => {
-    const value = e.target.value;
-    setSearch(value);
-    if (!value.trim()) {
+  useEffect(() => {
+    if (!search || !search.trim()) {
       setFilteredEmails(emails);
       return;
     }
-    try {
-      const res = await axios.get(
-        `${BACKEND_URL}/api/notifications/search/${userEmail}?q=${encodeURIComponent(value)}`,
-        { withCredentials: true }
-      );
-      setFilteredEmails(res.data);
-    } catch (err) {
-      // Optionally handle error
-    }
-  };
+    const fetchSearch = async () => {
+      try {
+        const res = await axiosInstance.get(
+          `/api/notifications/search/${userEmail}?q=${encodeURIComponent(search)}`
+        );
+        setFilteredEmails(res.data);
+      } catch (err) {
+        console.log(err);
+      }
+    };
+    fetchSearch();
+  }, [search, emails, userEmail]);
 
   let displayEmails = filteredEmails;
   if (location.pathname === "/dashboard") {
@@ -99,7 +90,7 @@ const Dashboard = () => {
   }
 
   return (
-    <MainLayout>
+    <MainLayout search={search} onSearch={onSearch}>
       <div className="h-full">
         <div className="border-b border-gray-200">
           <div className="flex items-center">
@@ -114,16 +105,7 @@ const Dashboard = () => {
               <Inbox size={18} className="mr-2" />
               Inbox
             </button>
-            {/* Search bar */}
-            <input
-              ref={searchRef}
-              type="text"
-              value={search}
-              onChange={handleSearch}
-              placeholder="Search mail..."
-              className="ml-6 flex-1 px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-              style={{ maxWidth: 320 }}
-            />
+            {/* Removed small search bar */}
           </div>
         </div>
         <EmailList emails={displayEmails} />

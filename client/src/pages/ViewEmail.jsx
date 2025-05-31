@@ -13,8 +13,7 @@ import {
 } from "lucide-react";
 import MainLayout from "../components/Layout/MainLayout";
 import ComposeEmail from "../components/Email/ComposeEmail";
-import axios from "axios";
-import { BACKEND_URL } from "../utils/constants";
+import axiosInstance from "../utils/axiosInstance";
 
 const ViewEmail = () => {
   const { id } = useParams();
@@ -24,18 +23,14 @@ const ViewEmail = () => {
   const [showReply, setShowReply] = useState(false);
 
   useEffect(() => {
-    axios
-      .get(`${BACKEND_URL}/api/notifications/${id}`, { withCredentials: true })
+    axiosInstance
+      .get(`/api/notifications/${id}`)
       .then((response) => {
         setEmail(response.data);
         setLoading(false);
         if (response.data && response.data.isRead === false) {
-          axios
-            .put(
-              `${BACKEND_URL}/api/notifications/${id}`,
-              { isRead: true },
-              { withCredentials: true }
-            )
+          axiosInstance
+            .put(`/api/notifications/${id}`, { isRead: true })
             .then(() => {
               setEmail((prev) => (prev ? { ...prev, isRead: true } : prev));
             });

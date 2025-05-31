@@ -54,11 +54,12 @@ router.post("/refresh-token", async (req, res, next) => {
   try {
     const { refreshToken: token } = req.body;
     const result = await authService.refreshToken(token);
+    console.log("refresh token successful", result);
     res.cookie("access_token", result.token, {
       httpOnly: true,
       secure: true,
       sameSite: "strict",
-      maxAge: process.env.ACCESS_TOKEN_DURATION,
+      maxAge: process.env.ACCESS_TOKEN_MAX_AGE,
     });
     res.status(HTTP_STATUS.OK).json(result);
   } catch (err) {

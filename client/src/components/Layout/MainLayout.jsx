@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Header from './Header';
 import Sidebar from './Sidebar';
 
-const MainLayout = ({ children }) => {
+const MainLayout = ({ children, search, onSearch }) => {
   const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
@@ -24,7 +24,7 @@ const MainLayout = ({ children }) => {
 
   return (
     <div className="h-screen flex flex-col bg-gray-50">
-      <Header />
+      <Header search={search} onSearch={onSearch} />
       
       <div className="flex flex-1 overflow-hidden">
         <div className={`${isMobile ? 'absolute z-20' : 'w-64'} h-full bg-white border-r border-gray-200`}>

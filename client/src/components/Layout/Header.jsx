@@ -1,17 +1,15 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { Search, Menu, Bell, HelpCircle, Settings, User } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 
-const Header = () => {
+const Header = ({ search, onSearch }) => {
   const { user, logout } = useAuth();
   const [showUserMenu, setShowUserMenu] = useState(false);
-  const [searchQuery, setSearchQuery] = useState('');
-  
-  const handleSearchSubmit = (e) => {
-    e.preventDefault();
-    // Handle search functionality
-    console.log('Searching for:', searchQuery);
+  const location = useLocation();
+
+  const handleSearchChange = (e) => {
+    onSearch && onSearch(e.target.value);
   };
 
   return (
@@ -30,20 +28,23 @@ const Header = () => {
           </Link>
         </div>
         
-        <div className="flex-1 max-w-2xl mx-6 hidden md:block">
-          <form onSubmit={handleSearchSubmit} className="relative">
-            <div className="flex items-center bg-gray-100 rounded-full px-4 py-2 focus-within:shadow-md transition-shadow duration-300">
-              <Search size={20} className="text-gray-500 mr-2" />
-              <input
-                type="text"
-                placeholder="Search mail"
-                className="bg-transparent w-full outline-none text-gray-700"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-              />
-            </div>
-          </form>
-        </div>
+        {/* Only show search bar on dashboard/starred/sent */}
+        {['/dashboard', '/starred', '/sent'].includes(location.pathname) && (
+          <div className="flex-1 max-w-2xl mx-6 hidden md:block">
+            <form className="relative">
+              <div className="flex items-center bg-gray-100 rounded-full px-4 py-2 focus-within:shadow-md transition-shadow duration-300">
+                <Search size={20} className="text-gray-500 mr-2" />
+                <input
+                  type="text"
+                  placeholder="Search mail"
+                  className="bg-transparent w-full outline-none text-gray-700"
+                  value={search}
+                  onChange={handleSearchChange}
+                />
+              </div>
+            </form>
+          </div>
+        )}
         
         <div className="flex items-center space-x-3">
           <button className="p-2 text-gray-700 hover:text-gray-900 focus:outline-none">
@@ -96,21 +97,6 @@ const Header = () => {
             )}
           </div>
         </div>
-      </div>
-      
-      <div className="md:hidden px-4 pb-3">
-        <form onSubmit={handleSearchSubmit} className="relative">
-          <div className="flex items-center bg-gray-100 rounded-full px-4 py-2">
-            <Search size={18} className="text-gray-500 mr-2" />
-            <input
-              type="text"
-              placeholder="Search mail"
-              className="bg-transparent w-full outline-none text-gray-700"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-            />
-          </div>
-        </form>
       </div>
     </header>
   );

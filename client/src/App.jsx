@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import Login from './pages/Login';
@@ -19,6 +19,7 @@ const ProtectedRoute = ({ children }) => {
 };
 
 function App() {
+  const [search, setSearch] = useState("");
   return (
     <AuthProvider>
       <BrowserRouter>
@@ -29,7 +30,7 @@ function App() {
             path="/dashboard" 
             element={
               <ProtectedRoute>
-                <Dashboard />
+                <Dashboard search={search} onSearch={setSearch} />
               </ProtectedRoute>
             } 
           />
@@ -53,7 +54,7 @@ function App() {
             path="/starred" 
             element={
               <ProtectedRoute>
-                <Dashboard />
+                <Dashboard search={search} onSearch={setSearch} />
               </ProtectedRoute>
             } 
           />
@@ -61,7 +62,7 @@ function App() {
             path="/sent" 
             element={
               <ProtectedRoute>
-                <Dashboard />
+                <Dashboard search={search} onSearch={setSearch} />
               </ProtectedRoute>
             } 
           />

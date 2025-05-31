@@ -105,7 +105,6 @@ const Dashboard = ({ search, onSearch }) => {
               <Inbox size={18} className="mr-2" />
               Inbox
             </button>
-            {/* Removed small search bar */}
           </div>
         </div>
         <EmailList emails={displayEmails} />

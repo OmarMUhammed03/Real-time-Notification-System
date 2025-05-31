@@ -1,5 +1,4 @@
 const mongoose = require("mongoose");
-const { sendEvent } = require("../../auth-service/utils/kafkaProducer");
 
 const NotificationSchema = new mongoose.Schema({
   title: { type: String, required: true },

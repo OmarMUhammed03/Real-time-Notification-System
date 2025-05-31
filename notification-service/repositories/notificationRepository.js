@@ -56,15 +56,33 @@ exports.getNotificationsBySenderEmail = async (email) => {
 };
 
 exports.searchNotifications = async (email, query) => {
-  return Notification.find({
+  if (!query || !query.trim()) {
+    return Notification.find({
+      $or: [{ receiverEmail: email }, { senderEmail: email }],
+    });
+  }
+
+  let results = await Notification.find({
     $and: [
       {
-        $or: [
-          { receiverEmail: email },
-          { senderEmail: email },
-        ],
+        $or: [{ receiverEmail: email }, { senderEmail: email }],
       },
       { $text: { $search: query } },
     ],
   });
+
+  if (results.length === 0 && query.length < 3) {
+    const regex = new RegExp(query, "i");
+    results = await Notification.find({
+      $and: [
+        {
+          $or: [{ receiverEmail: email }, { senderEmail: email }],
+        },
+        {
+          $or: [{ title: regex }, { content: regex }],
+        },
+      ],
+    });
+  }
+  return results;
 };

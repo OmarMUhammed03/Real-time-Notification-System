@@ -46,6 +46,7 @@ const Dashboard = ({ search, onSearch }) => {
       axiosInstance
         .get(`/api/notifications/receiver-email/${user.email}`)
         .then((response) => {
+          console.log("notifications", response.data);
           setEmails(response.data);
           setFilteredEmails(response.data);
         })
@@ -66,7 +67,9 @@ const Dashboard = ({ search, onSearch }) => {
     const fetchSearch = async () => {
       try {
         const res = await axiosInstance.get(
-          `/api/notifications/search/${userEmail}?q=${encodeURIComponent(search)}`
+          `/api/notifications/search/${userEmail}?q=${encodeURIComponent(
+            search
+          )}`
         );
         setFilteredEmails(res.data);
       } catch (err) {
@@ -83,14 +86,23 @@ const Dashboard = ({ search, onSearch }) => {
     );
   } else if (location.pathname === "/starred") {
     displayEmails = filteredEmails.filter(
-      (email) => email.category === "starred" && email.receiverEmail === userEmail
+      (email) =>
+        email.category === "starred" && email.receiverEmail === userEmail
     );
   } else if (location.pathname === "/sent") {
-    displayEmails = filteredEmails.filter((email) => email.senderEmail === userEmail);
+    displayEmails = filteredEmails.filter(
+      (email) => email.senderEmail === userEmail
+    );
   }
 
   return (
-    <MainLayout search={search} onSearch={onSearch}>
+    <MainLayout
+      search={search}
+      onSearch={onSearch}
+      unreadCount={
+        emails.filter((e) => !e.isRead && e.receiverEmail === userEmail).length
+      }
+    >
       <div className="h-full">
         <div className="border-b border-gray-200">
           <div className="flex items-center">

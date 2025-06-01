@@ -86,3 +86,7 @@ exports.searchNotifications = async (email, query) => {
   }
   return results;
 };
+
+exports.updateManyNotifications = async (filter, update) => {
+  return Notification.updateMany(filter, { $set: update });
+};

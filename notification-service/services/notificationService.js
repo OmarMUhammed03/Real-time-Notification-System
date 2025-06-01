@@ -22,18 +22,24 @@ exports.createNotification = async (notification) => {
 };
 
 exports.findNotification = async (notificationId) => {
-  const notification = await notificationRepository.getNotification(notificationId);
+  const notification = await notificationRepository.getNotification(
+    notificationId
+  );
   return notification;
 };
 
 exports.findNotificationsBySenderEmail = async (senderEmail) => {
-  const notifications = await notificationRepository.getSentNotifications(senderEmail);
+  const notifications = await notificationRepository.getSentNotifications(
+    senderEmail
+  );
   return notifications;
 };
 
 exports.findUserNotifications = async (email) => {
-  const notifications = await notificationRepository.getNotificationsByReceiverEmail(email);
-  const sentNotifications = await notificationRepository.getNotificationsBySenderEmail(email);
+  const notifications =
+    await notificationRepository.getNotificationsByReceiverEmail(email);
+  const sentNotifications =
+    await notificationRepository.getNotificationsBySenderEmail(email);
   notifications.push(...sentNotifications);
   return notifications;
 };
@@ -57,3 +63,13 @@ exports.searchNotifications = async (email, query) => {
   return notificationRepository.searchNotifications(email, query);
 };
 
+exports.updateUserNameInNotifications = async (email, newName) => {
+  await notificationRepository.updateManyNotifications(
+    { senderEmail: email },
+    { senderName: newName }
+  );
+  await notificationRepository.updateManyNotifications(
+    { receiverEmail: email },
+    { receiverName: newName }
+  );
+};

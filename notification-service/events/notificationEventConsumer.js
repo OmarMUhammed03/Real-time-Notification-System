@@ -1,33 +1,33 @@
-const { createConsumer, startConsumer } = require("../utils/kafkaConsumer");
+const { createConsumer } = require("../utils/kafkaConsumer");
 const notificationService = require("../services/notificationService");
 
-async function handleNotificationEvent(io, onlineUsers) {
-  return async ({ message }) => {
-    console.log("Notification event received", message.value.toString());
-    console.log("onlineUsers", onlineUsers);
-    try {
-      console.log("Processing notification event...", message);
-      const event = JSON.parse(message.value.toString());
-      await notificationService.createNotification({ ...event });
-
-      const { receiverEmail } = event;
-      if (receiverEmail && onlineUsers.has(receiverEmail)) {
-        const socketId = onlineUsers.get(receiverEmail);
-        io.to(socketId).emit("notification", event);
-        console.log("notification sent to the reciever");
-      } else {
-        console.log("User not online");
-      }
-    } catch (err) {
-      console.error("Failed to process notification event:", err.message);
-    }
-  };
+async function handleUserNameUpdatedEvent(message) {
+  try {
+    const event = JSON.parse(message.value.toString());
+    const { email, name: newName } = event;
+    await notificationService.updateUserNameInNotifications(email, newName);
+    console.log(
+      `Updated notifications for user email: ${email} to new name: ${newName}`
+    );
+  } catch (err) {
+    console.error("Failed to process userNameUpdated event:", err.message);
+  }
 }
 
-async function startNotificationEventConsumer(io, onlineUsers) {
-  const consumer = createConsumer("notification-service-group");
-  const runner = await handleNotificationEvent(io, onlineUsers);
-  await startConsumer(consumer, "notification", runner);
+async function startNotificationEventConsumer() {
+  const userNameConsumer = createConsumer(
+    "notification-service-group-username"
+  );
+  await userNameConsumer.connect();
+  await userNameConsumer.subscribe({
+    topic: "userNameUpdated",
+    fromBeginning: false,
+  });
+  await userNameConsumer.run({
+    eachMessage: async ({ message }) => {
+      await handleUserNameUpdatedEvent(message);
+    },
+  });
 }
 
 module.exports = { startNotificationEventConsumer };

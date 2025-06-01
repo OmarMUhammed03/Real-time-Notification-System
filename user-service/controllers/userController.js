@@ -41,6 +41,15 @@ router.put("/:id", async (req, res, next) => {
   }
 });
 
+router.put("/email/:email", async (req, res, next) => {
+  try {
+    const user = await userService.updateUserByEmail(req.params.email, req.body);
+    res.status(HTTP_STATUS.OK).json({ data: user });
+  } catch (err) {
+    next(err);
+  }
+});
+
 router.delete("/:id", async (req, res, next) => {
   try {
     const user = await userService.deleteUser(req.params.id);

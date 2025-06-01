@@ -23,6 +23,10 @@ const findUserByRefreshToken = async (token) => {
   return AuthUser.findOne({ refreshTokens: { $in: [token] } });
 };
 
+const updatePassword = async (userId, hashedPassword) => {
+  return AuthUser.findByIdAndUpdate(userId, { hashedPassword }, { new: true });
+};
+
 module.exports = {
   findById,
   findByEmail,
@@ -30,4 +34,5 @@ module.exports = {
   addRefreshToken,
   removeRefreshToken,
   findUserByRefreshToken,
+  updatePassword,
 };

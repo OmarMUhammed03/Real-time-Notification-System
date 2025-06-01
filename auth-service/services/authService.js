@@ -84,4 +84,18 @@ const logout = async (token) => {
   return { message: "Logged out successfully" };
 };
 
-module.exports = { register, login, refreshToken, logout, getCurrentUser };
+
+const updateUserPasswordByEmail = async (email, newPassword) => {
+  const user = await authRepository.findByEmail(email);
+  if (!user) {
+    const error = new Error("User not found");
+    error.status = HTTP_STATUS.NOT_FOUND;
+    throw error;
+  }
+  const bcrypt = require("bcrypt");
+  const hashedPassword = await bcrypt.hash(newPassword, BCRYPT_SALT_ROUNDS);
+  await authRepository.updatePassword(user._id, hashedPassword);
+  return true;
+};
+
+module.exports = { register, login, refreshToken, logout, getCurrentUser, updateUserPasswordByEmail };

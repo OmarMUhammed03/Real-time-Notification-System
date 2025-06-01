@@ -79,4 +79,17 @@ router.post("/logout", async (req, res, next) => {
   }
 });
 
+router.put("/update-password/email/:email", async (req, res, next) => {
+  try {
+    const { password } = req.body;
+    if (!password || password.length < 6) {
+      return res.status(HTTP_STATUS.BAD_REQUEST).json({ error: "Password must be at least 6 characters" });
+    }
+    await authService.updateUserPasswordByEmail(req.params.email, password);
+    res.status(HTTP_STATUS.OK).json({ message: "Password updated successfully" });
+  } catch (err) {
+    next(err);
+  }
+});
+
 module.exports = router;

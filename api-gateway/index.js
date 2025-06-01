@@ -7,8 +7,6 @@ const logger = require("morgan");
 const colors = require("colors");
 const http = require("http");
 const cors = require("cors");
-const swaggerUi = require("swagger-ui-express");
-const swaggerJsdoc = require("swagger-jsdoc");
 
 const app = express();
 const server = http.createServer(app);
@@ -26,24 +24,22 @@ const swaggerOptions = {
       { url: `http://localhost:${process.env.API_GATEWAY_PORT || 3000}` },
     ],
   },
-  apis: [
-    "./docs/gateway.swagger.js",
-  ],
+  apis: ["./docs/gateway.swagger.js"],
 };
 const swaggerSpec = swaggerJsdoc(swaggerOptions);
 
-app.use(cors({
-  origin: "http://localhost:8000",
-  credentials: true
-}));
+app.use(
+  cors({
+    origin: "http://localhost:8000",
+    credentials: true,
+  })
+);
 
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(logger("dev"));
 
 app.use("/api", proxy);
-app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
-
 server.listen(PORT, () => {
   console.log(`Server running at http://localhost:${PORT}/`.cyan.bold);
 });

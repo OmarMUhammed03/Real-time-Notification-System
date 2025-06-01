@@ -1,17 +1,15 @@
 const { Server } = require("socket.io");
 const axios = require("axios");
-const { HTTP_STATUS } = require("../utils/constants");
-const { sendNotification } = require("../utils/kafkaProducer");
 const {
   startNotificationEventConsumer,
 } = require("../events/notificationEventConsumer");
+const notificaiontService = require("../services/notificationService");
 
 const onlineUsers = new Map();
 const socketToUsers = new Map();
 
 const getNames = async (senderEmail, receiverEmail) => {
   try {
-
     const senderResponse = await axios.get(
       `http://localhost:${process.env.USER_SERVICE_PORT}/users/email/${senderEmail}`
     );
@@ -19,7 +17,7 @@ const getNames = async (senderEmail, receiverEmail) => {
     const senderName = senderResponse.data.data.name;
 
     const receiverResponse = await axios.get(
-      `http://localhost:${process.env.USER_SERVICE_PORT}/users/email/${receiverEmail}`,
+      `http://localhost:${process.env.USER_SERVICE_PORT}/users/email/${receiverEmail}`
     );
 
     console.log("receiverResponse", receiverResponse);
@@ -58,7 +56,7 @@ async function initializeSocket(server) {
       try {
         const { senderName, receiverName } = await getNames(
           event.senderEmail,
-          event.receiverEmail,
+          event.receiverEmail
         );
         if (!senderName || !receiverName) {
           console.log("Failed to fetch names");
@@ -66,8 +64,16 @@ async function initializeSocket(server) {
         }
         event.senderName = senderName;
         event.receiverName = receiverName;
-        await sendNotification(event);
-        console.log("notification sent");
+        await notificaiontService.createNotification(event);
+
+        const { receiverEmail } = event;
+        if (receiverEmail && onlineUsers.has(receiverEmail)) {
+          const socketId = onlineUsers.get(receiverEmail);
+          io.to(socketId).emit("notification", event);
+          console.log("notification sent to the reciever");
+        } else {
+          console.log("User not online");
+        }
       } catch (error) {
         console.log(error);
       }
@@ -85,9 +91,9 @@ async function initializeSocket(server) {
     });
   });
 
-  await startNotificationEventConsumer(io, onlineUsers);
+  await startNotificationEventConsumer();
 
   return io;
 }
 
-module.exports = { initializeSocket, onlineUsers };
+module.exports = { initializeSocket };

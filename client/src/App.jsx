@@ -7,6 +7,7 @@ import Dashboard from './pages/Dashboard';
 import Compose from './pages/Compose';
 import ViewEmail from './pages/ViewEmail';
 import NotFound from './pages/NotFound';
+import Settings from './pages/Settings';
 
 const ProtectedRoute = ({ children }) => {
   const { user } = useAuth();
@@ -63,6 +64,14 @@ function App() {
             element={
               <ProtectedRoute>
                 <Dashboard search={search} onSearch={setSearch} />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/settings" 
+            element={
+              <ProtectedRoute>
+                <Settings />
               </ProtectedRoute>
             } 
           />

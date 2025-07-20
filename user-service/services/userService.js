@@ -3,13 +3,11 @@ const { HTTP_STATUS } = require("../utils/constants");
 const { sendEvent } = require("../utils/kafkaProducer");
 
 exports.findAllUsers = async () => {
-  const users = await userRepository.findAllUsers();
-  return users;
+  return await userRepository.findAllUsers();
 };
 
 exports.createUser = async (user) => {
-  const createdUser = await userRepository.createUser(user);
-  return createdUser;
+  return await userRepository.createUser(user);
 };
 
 exports.findUserById = async (id) => {
@@ -39,8 +37,7 @@ exports.updateUser = async (id, user) => {
     error.status = HTTP_STATUS.NOT_FOUND;
     throw error;
   }
-  const updatedUser = await userRepository.updateUser(id, user);
-  return updatedUser;
+  return await userRepository.updateUser(id, user);
 };
 
 exports.updateUserByEmail = async (email, userData) => {
@@ -50,15 +47,15 @@ exports.updateUserByEmail = async (email, userData) => {
     error.status = HTTP_STATUS.NOT_FOUND;
     throw error;
   }
-  const { password, ...userData } = user;
+  const { password, ...dataToUpdate } = userData;
   const oldName = existingUser.name;
   const updatedUser = await userRepository.updateUser(
     existingUser._id,
-    userData
+    dataToUpdate
   );
-  if (userData.name !== oldName) {
+  if (dataToUpdate.name !== oldName) {
     await sendEvent("userNameUpdated", [
-      { value: JSON.stringify({ email, name: userData.name }) },
+      { value: JSON.stringify({ email, name: dataToUpdate.name }) },
     ]);
   }
   return updatedUser;
@@ -71,6 +68,5 @@ exports.deleteUser = async (id) => {
     error.status = HTTP_STATUS.NOT_FOUND;
     throw error;
   }
-  const deletedUser = await userRepository.deleteUser(id);
-  return deletedUser;
+  return await userRepository.deleteUser(id);
 };

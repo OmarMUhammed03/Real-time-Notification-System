@@ -9,14 +9,14 @@ async function uploadDocument(req, res) {
         const file = req.file;
         if (!file) return res.status(400).json({ error: 'File is required' });
 
-        const s3Result = await uploadToS3(req.file, req.user.id);
+        const s3Result = await uploadToS3(file);
 
         const document = await documentService.createDocument({
             file: {
                 ...file,
                 storageUrl: s3Result.storageUrl,
             },
-            ownerId: req.user.id,
+            ownerId: req.user.id, // Assume req.user is set by auth middleware
             encrypted: req.body.encrypted === 'true',
             encryptionMethod: req.body.encryptionMethod || null,
             tags: req.body.tags?.split(',') || [],

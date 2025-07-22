@@ -8,7 +8,7 @@ import Compose from './pages/Compose';
 import ViewEmail from './pages/ViewEmail';
 import NotFound from './pages/NotFound';
 import Settings from './pages/Settings';
-
+import Documents from "@pages/Documents.jsx";
 const ProtectedRoute = ({ children }) => {
   const { user } = useAuth();
   
@@ -74,6 +74,14 @@ function App() {
                 <Settings />
               </ProtectedRoute>
             } 
+          />
+             <Route
+            path="/documents"
+            element={
+              <ProtectedRoute>
+                <Documents />
+              </ProtectedRoute>
+            }
           />
           <Route path="*" element={<NotFound />} />
         </Routes>

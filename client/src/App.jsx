@@ -8,7 +8,7 @@ import Compose from './pages/Compose';
 import ViewEmail from './pages/ViewEmail';
 import NotFound from './pages/NotFound';
 import Settings from './pages/Settings';
-import Documents from "@pages/Documents.jsx";
+import Documents from "./pages/Documents";
 const ProtectedRoute = ({ children }) => {
   const { user } = useAuth();
   

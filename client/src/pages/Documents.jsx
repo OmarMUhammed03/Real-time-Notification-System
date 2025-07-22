@@ -9,11 +9,11 @@
 import React, { useState } from 'react';
 import { Header } from '../components/layout/Header';
 import { Sidebar } from '../components/layout/Sidebar';
-import { DocumentCard } from '../../Real-time-Notification-System/client/src/components/documents/DocumentCard';
-import { UploadArea } from '../../Real-time-Notification-System/client/src/components/documents/UploadArea';
-import { SearchFilters } from '../../Real-time-Notification-System/client/src/components/documents/SearchFilters';
-import { ShareModal } from '../../Real-time-Notification-System/client/src/components/sharing/ShareModal';
-import { useDocuments } from '../../Real-time-Notification-System/client/src/components/hooks/useDocuments';
+import { DocumentCard } from '../components/documents/DocumentCard';
+import { UploadArea } from '../components/documents/UploadArea';
+import { SearchFilters } from '../components/documents/SearchFilters';
+import { ShareModal } from '../components/sharing/ShareModal';
+import { useDocuments } from '../components/hooks/useDocuments';
 
 function Documents() {
   // ========================================
